@@ -15,9 +15,9 @@ class Net(nn.Module):
         super().__init__()
         self.N = n_params
 
-        self.a = nn.Linear(1, self.N)
+        self.a = nn.Linear(1, self.N, bias=False)
         torch.exp_(self.a.weight.data)
-        self.b = nn.Linear(1, self.N)
+        self.b = nn.Linear(1, self.N, bias=False)
 
         self.pz = MultivariateNormal(torch.zeros(self.N), torch.eye(self.N)) # latent distribution
         # self.px = Uniform(-1*torch.ones(self.N) + 3, 3*torch.ones(self.N)) # target distribution
@@ -32,7 +32,7 @@ class Net(nn.Module):
         self.data = self.px.sample([self.num_samples]).reshape(self.N, -1) # sample from target distribution
         for epoch in tqdm(range(num_epochs)):
 
-            log_jacob = torch.log(1/self.a.weight.sum()) # log of the determinant
+            log_jacob = -torch.log(self.a.weight).sum() # log of the determinant
             inverse = ((self.data - self.b.weight)/self.a.weight).mean(1) # the inverse of the T transformation
 
             # computes loss
