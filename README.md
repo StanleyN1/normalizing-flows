@@ -8,4 +8,5 @@ Implements various kinds of normalzing flows (affine, non-affine).
 
 References:
   https://arxiv.org/pdf/1912.02762.pdf
+  
   https://arxiv.org/pdf/1912.09092.pdf
