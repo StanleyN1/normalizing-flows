@@ -65,7 +65,7 @@ class Net(nn.Module):
 # %%
 epochs = 1000
 # %% 2 dimensional case
-net2d = Net(n_params=2, num_samples=10_000_0)
+net2d = Net(n_params=2, num_samples=100_000)
 losses2d = net2d(epochs)
 data2d = net2d.sample(200)
 
@@ -77,13 +77,14 @@ modified = {
 
 df2d = pd.DataFrame(modified)
 
-sns.scatterplot(data=df['latent'], x='x', y='y', label='latent')
-sns.scatterplot(data=df['target'], x='x', y='y', label='target')
-sns.scatterplot(data=df['original'], x='x', y='y', label='original')
+sns.scatterplot(data=df2d['latent'], x='x', y='y', label='latent')
+sns.scatterplot(data=df2d['target'], x='x', y='y', label='target')
+sns.scatterplot(data=df2d['original'], x='x', y='y', label='original')
 
+# plt.savefig(fname='2d-gaussian-approx')
 # %% 1 dimensional case
 net1d = Net(n_params=1, num_samples=10_00)
-losses2d = net1d(epochs)
+losses1d = net1d(epochs)
 data1d = net1d.sample(400)
 
 df1d = pd.DataFrame({'latent': data1d[0].reshape(-1), 'target': data1d[1].reshape(-1), 'original': data1d[2].reshape(-1)})
@@ -91,7 +92,8 @@ df1d = pd.DataFrame({'latent': data1d[0].reshape(-1), 'target': data1d[1].reshap
 sns.histplot(data=df1d, bins='auto')
 plt.xlim([-10, 10])
 
+# plt.savefig(fname='1d-gaussian-approx')
 # %%
 
-plt.plot([i for i in range(len(losses))], losses, label='losses')
+plt.plot([i for i in range(len(losses1d))], losses1d, label='losses')
 plt.plot([i for i in range(len(losses2d))], losses2d, label='losses2d')
