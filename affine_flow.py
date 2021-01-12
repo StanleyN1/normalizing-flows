@@ -18,6 +18,7 @@ class Net(nn.Module):
         self.a = nn.Linear(1, self.N, bias=False)
         torch.exp_(self.a.weight.data)
         self.b = nn.Linear(1, self.N, bias=False)
+        torch.abs_(self.b.weight.data)
 
         self.pz = MultivariateNormal(torch.zeros(self.N), torch.eye(self.N)) # latent distribution
         # self.px = Uniform(-1*torch.ones(self.N) + 3, 3*torch.ones(self.N)) # target distribution
@@ -43,7 +44,7 @@ class Net(nn.Module):
             loss = (1/self.N) * loss
             losses.append(float(loss))
 
-            if loss < 1e-4:
+            if loss < 1e-8:
                 print(f'ended at epoch: {epoch}')
                 break
 
@@ -51,7 +52,7 @@ class Net(nn.Module):
             optimizer.step()
             optimizer.zero_grad()
 
-            if (epoch + 1) % 25 == 0:
+            if (epoch + 1) % 250 == 0:
                 print('loss:', round(float(loss), 3))
 
         return losses
@@ -83,7 +84,7 @@ sns.scatterplot(data=df2d['original'], x='x', y='y', label='original')
 
 # plt.savefig(fname='2d-gaussian-approx')
 # %% 1 dimensional case
-net1d = Net(n_params=1, num_samples=10_00)
+net1d = Net(n_params=1, num_samples=1_000)
 losses1d = net1d(epochs)
 data1d = net1d.sample(400)
 
@@ -92,6 +93,8 @@ df1d = pd.DataFrame({'latent': data1d[0].reshape(-1), 'target': data1d[1].reshap
 sns.histplot(data=df1d, bins='auto')
 plt.xlim([-10, 10])
 
+# implement multi-modal distributions
+x = z * a + b
 # plt.savefig(fname='1d-gaussian-approx')
 # %%
 
